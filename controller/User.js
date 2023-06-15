@@ -46,4 +46,17 @@ const login = async (req, res) => {
     const accessToken = jwt.sign({id: foundUser._id, firstName: foundUser.firstName}, process.env.SECRET_KEY, {expiresIn: "24h"});
     res.status(200).json({accessToken});
 }
-module.exports = {register, login}
+// Get User Info
+const getUserInfo = async (req, res) => {
+    if (!req.user || !req.user.id) {
+        return res.status(403).json({message: "Not authorized"});
+    }
+    const {id, firstName} = req.user;
+    // Find User 
+    const foundUser = await User.findOne({_id: id}).select('-password');
+    if (!foundUser) {
+        return res.status(400).json({message: "User does not exist"})
+    }
+    res.status(200).json(foundUser);
+}
+module.exports = {register, login, getUserInfo}
