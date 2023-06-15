@@ -11,6 +11,11 @@ const UserSchema = new mongoose.Schema({
         require: true,
         min: 3
     },
+    email: {
+        type: String,
+        require: true,
+        unique: true
+    },
     friends: {
         type: Array,
         default: []
@@ -34,5 +39,15 @@ const UserSchema = new mongoose.Schema({
     occupation: {
         type: String,
         default: "Student"
+    },
+    location: {
+        type: "String",
+        require: true
+    },
+    enrollment: {
+        type: Array,
+        default: []
     }
 })
+
+module.exports = mongoose.model("User", UserSchema);
