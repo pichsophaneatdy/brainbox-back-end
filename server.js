@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(cors());
 
 // Routes
-
+app.get("/", (req, res) => res.send("Welcome to BrainBox API"));
 
 // Connect to Database abd start the server
 const start = async() => {
