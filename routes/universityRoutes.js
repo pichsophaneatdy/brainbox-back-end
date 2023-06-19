@@ -3,6 +3,8 @@ const express = require('express');
 const router = express.Router();
 
 // Create University 
-router.route("/university").post(universityController.createUniversity);
-router.route("/degree").post(universityController.createDegree);
+router.route("/university").post(universityController.createUniversity).get(universityController.getUniversities);
+router.route("/degree").post(universityController.createDegree)
+router.route("/degree/:universityID").get(universityController.getDegrees);;
+
 module.exports = router;
