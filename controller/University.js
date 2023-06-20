@@ -1,5 +1,6 @@
 const University = require("../model/University");
 const Degree = require("../model/Degree");
+const Course = require("../model/CourseModel");
 //  Create university 
 const createUniversity = async(req, res) => {
     const {name, location, website} = req.body;
@@ -47,6 +48,18 @@ const getDegrees = async(req,res) => {
     const filteredDegrees = degrees.filter((degree) => degree.university == req.params.universityID);
     res.status(200).json(filteredDegrees);
 }
-// Add degree id to university's degree array list
+// Add course 
+const createCourse = async(req, res) => {
+    const {name, code, credits,degree, description} = req.body;
+    if (!name || !code || !credits || !degree) {
+        return res.status(400).json({message: "Missing required fields"})
+    }
+    try {
+        const newCourse = await Course.create({name, code, credits, degree, description});
+        res.status(201).json(newCourse);
+    } catch(error){
+        res.status(500).json({message: "Unable to create this course right now, please try again later"});
+    }
+}
 
-module.exports = {createUniversity, getUniversities, createDegree, getDegrees};
+module.exports = {createUniversity, getUniversities, createDegree, getDegrees, createCourse};
