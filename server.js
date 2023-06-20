@@ -8,6 +8,7 @@ const PORT = process.env.PORT || 8080;
 // Import Routers and Middlware
 const userRouter = require("./routes/userRoutes");
 const universityRouter = require("./routes/universityRoutes")
+const postRouter = require("./routes/postRoute");
 const authenicateMiddlware = require("./middleware/authenticate");
 
 const app = express();
@@ -20,7 +21,7 @@ app.use(cors());
 app.get("/", (req, res) => res.send("<h1>Welcome to BrainBox API<h1>"));
 app.use("/user", userRouter);
 app.use("/university", universityRouter);
-
+app.use("/post", postRouter)
 // Connect to Database abd start the server
 const start = async() => {
     try {
