@@ -7,5 +7,8 @@ router.route("/register").post(userController.register);
 // Login
 router.route("/login").post(userController.login);
 // Get user info
-router.route("/").get(authenticateMiddleware, userController.getUserInfo);
+router.route("/")
+    .get(authenticateMiddleware, userController.getUserInfo)
+    .patch(userController.updateUser);
+// Update 
 module.exports = router;

@@ -46,6 +46,22 @@ const login = async (req, res) => {
     const accessToken = jwt.sign({id: foundUser._id, firstName: foundUser.firstName}, process.env.SECRET_KEY, {expiresIn: "24h"});
     res.status(200).json({accessToken});
 }
+// Update User Info 
+const updateUser = async(req, res) => {
+    const {userID, university, degree, enrollment} = req.body;
+    if (!userID || !university || !degree || !enrollment) {
+        return res.status(400).json({message: "Missing required information"});
+    }
+    try {
+        const updatedUser = await User.findByIdAndUpdate({_id: userID}, {university: university, degree: degree, enrollment: enrollment});
+        const updatedInfo = await User.findById(userID).select('-password');
+        res.status(200).json(updatedInfo);
+    } catch(error) {
+        res.status(500).json({message: 'Unable to update the user right now, please try again later'});
+    }
+    
+}
+
 // Get User Info
 const getUserInfo = async (req, res) => {
     if (!req.user || !req.user.id) {
@@ -59,4 +75,5 @@ const getUserInfo = async (req, res) => {
     }
     res.status(200).json(foundUser);
 }
-module.exports = {register, login, getUserInfo}
+
+module.exports = {register, login, getUserInfo, updateUser}

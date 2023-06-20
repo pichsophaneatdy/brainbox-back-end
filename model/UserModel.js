@@ -45,8 +45,8 @@ const UserSchema = new mongoose.Schema({
         require: true
     },
     enrollment: {
-        type: Array,
-        default: []
+        type: Object,
+        default: {}
     }
 })
 
