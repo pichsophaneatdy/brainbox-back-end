@@ -74,4 +74,18 @@ const getCourses = async(req, res) => {
     }
 
 }
-module.exports = {createUniversity, getUniversities, createDegree, getDegrees, createCourse, getCourses};
+const getSingleCourse = async(req, res)=> {
+    if(!req.params.courseID) {
+        return res.status(400).json({message: "Missing course id"});
+    }
+    try {
+        const course = await Course.findOne({_id: req.params.courseID});
+        if(course.length < 1) {
+            return res.status(400).json({message: "This course does not exist."})
+        }
+        res.status(200).json(course);
+    } catch(error) {
+        res.status(500).json({message: "Unable to retrieve the information right now, please try again later"})
+    }
+}
+module.exports = {createUniversity, getUniversities, createDegree, getDegrees, createCourse, getCourses, getSingleCourse};
