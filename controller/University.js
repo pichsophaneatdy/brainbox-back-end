@@ -61,5 +61,17 @@ const createCourse = async(req, res) => {
         res.status(500).json({message: "Unable to create this course right now, please try again later"});
     }
 }
+const getCourses = async(req, res) => {
+    if(!req.params.degreeID) {
+        res.status(400).json({message: "Missing degree information"})
+    }
+    try {
+        const allCourses = await Course.find();
+        const filteredCourses = allCourses.filter((course) => course.degree == req.params.degreeID);
+        res.status(200).json(filteredCourses);
+    } catch(error) {
+        res.status(500).json({message: "Unable to retrieve the message right now, please try again later."})
+    }
 
-module.exports = {createUniversity, getUniversities, createDegree, getDegrees, createCourse};
+}
+module.exports = {createUniversity, getUniversities, createDegree, getDegrees, createCourse, getCourses};
