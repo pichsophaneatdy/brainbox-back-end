@@ -31,9 +31,9 @@ const getSingleUniversity = async (req, res) => {
     }
     try {
         const university = await University.findOne({_id: req.params.uniID});
-        // if(!university) {
-        //     res.status(400).json({message: "This university does not exist"});
-        // }
+        if(!university) {
+            res.status(400).json({message: "This university does not exist"});
+        }
         res.status(200).json(university);
     } catch(error) {
         res.status(500).json({message: "Unable to retrieve this university right now, please try again later."})
@@ -69,7 +69,7 @@ const getSingleDegree = async(req, res) => {
     try {
         const degree = await Degree.findOne({_id: req.params.degreeID});
         if(!degree) {
-            res.status(400).json({message: "This degree does not exist"});
+            return res.status(400).json({message: "This degree does not exist"});
         }
         res.status(200).json(degree);
     } catch(error) {
