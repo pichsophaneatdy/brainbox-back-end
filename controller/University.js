@@ -25,7 +25,20 @@ const getUniversities = async (req, res) => {
     }
 }
 // Get Single University
-
+const getSingleUniversity = async (req, res) => {
+    if(!req.params.uniID) {
+        return res.status(400).json({message: "Missing University Information"});
+    }
+    try {
+        const university = await University.findOne({_id: req.params.uniID});
+        // if(!university) {
+        //     res.status(400).json({message: "This university does not exist"});
+        // }
+        res.status(200).json(university);
+    } catch(error) {
+        res.status(500).json({message: "Unable to retrieve this university right now, please try again later."})
+    }
+}
 // createDegree
 const createDegree = async(req,res) => {
     const {name, credits, university, description} = req.body;
@@ -47,6 +60,21 @@ const getDegrees = async(req,res) => {
     const degrees = await Degree.find();
     const filteredDegrees = degrees.filter((degree) => degree.university == req.params.universityID);
     res.status(200).json(filteredDegrees);
+}
+// Get a single degree
+const getSingleDegree = async(req, res) => {
+    if(!req.params.degreeID) {
+        return res.status(400).json({message: "Missing Degree  Information"});
+    }
+    try {
+        const degree = await Degree.findOne({_id: req.params.degreeID});
+        if(!degree) {
+            res.status(400).json({message: "This degree does not exist"});
+        }
+        res.status(200).json(degree);
+    } catch(error) {
+        res.status(500).json({message: "Unable to retrieve the message right now, please try again later."})
+    }
 }
 // Add course 
 const createCourse = async(req, res) => {
@@ -70,7 +98,7 @@ const getCourses = async(req, res) => {
         const filteredCourses = allCourses.filter((course) => course.degree == req.params.degreeID);
         res.status(200).json(filteredCourses);
     } catch(error) {
-        res.status(500).json({message: "Unable to retrieve the message right now, please try again later."})
+        res.status(500).json({message: "Unable to retrieve the courses right now, please try again later."})
     }
 
 }
@@ -88,4 +116,4 @@ const getSingleCourse = async(req, res)=> {
         res.status(500).json({message: "Unable to retrieve the information right now, please try again later"})
     }
 }
-module.exports = {createUniversity, getUniversities, createDegree, getDegrees, createCourse, getCourses, getSingleCourse};
+module.exports = {createUniversity, getUniversities, getSingleUniversity, createDegree, getDegrees, getSingleDegree, createCourse, getCourses, getSingleCourse};
