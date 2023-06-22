@@ -7,7 +7,7 @@ const createReview = async (req, res) => {
     }
     try {
         const newReview = await CourseReview.create({
-            userID, courseID, professor, difficulty, usefulness, topics, comment
+            userID, recommendation, courseID, professor, difficulty, usefulness, topics, comment
         })
         res.status(201).json(newReview);
     } catch(error) {
