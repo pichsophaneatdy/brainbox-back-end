@@ -75,5 +75,19 @@ const getUserInfo = async (req, res) => {
     }
     res.status(200).json(foundUser);
 }
+// Get Single User Info
+const getSingleUser = async (req, res) => {
+    if(!req.params.userID) {
+        return res.status(400).message({message: "Missing user id"})
+    }
+    try {
+        const foundUser = await User.findOne({_id: req.params.userID});
+        if(!foundUser) return res.status(400).json({message: "User with this ID does not exist."});
+        const {_id, firstName, lastName, location} = foundUser;
+        res.status(200).json({_id, firstName, lastName, location});
+    } catch(error){
+        res.status(500).message({message: "Unable to retrieve the user currently, please try again later"})
+    }
+}
 
-module.exports = {register, login, getUserInfo, updateUser}
+module.exports = {register, login, getUserInfo, updateUser, getSingleUser}

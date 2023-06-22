@@ -10,5 +10,7 @@ router.route("/login").post(userController.login);
 router.route("/")
     .get(authenticateMiddleware, userController.getUserInfo)
     .patch(userController.updateUser);
-// Update 
+// Single user route
+router.route("/:userID")
+    .get(userController.getSingleUser);
 module.exports = router;
