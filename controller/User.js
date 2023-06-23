@@ -83,11 +83,34 @@ const getSingleUser = async (req, res) => {
     try {
         const foundUser = await User.findOne({_id: req.params.userID});
         if(!foundUser) return res.status(400).json({message: "User with this ID does not exist."});
-        const {_id, firstName, lastName, location} = foundUser;
-        res.status(200).json({_id, firstName, lastName, location});
+        const {_id, firstName, lastName, location, friends} = foundUser;
+        res.status(200).json({_id, firstName, lastName, location, friends});
     } catch(error){
-        res.status(500).message({message: "Unable to retrieve the user currently, please try again later"})
+        res.status(500).json({message: "Unable to retrieve the user currently, please try again later"})
     }
 }
+// Add user to friend list
+const addFriend = async (req, res) => {
+    const {userID, friendID} = req.body;
+    if (!userID || !friendID) {
+        return res.status(400).json({message: "Missing user or friend information"});
+    }
+    try {
+        const foundUser = await User.findById(userID);
+        const foundFriend = await User.findById(friendID);
+        if (!foundUser || !foundFriend) {
+            return res.status(400).json({message: "User not found or friend not found"});
+        }
+        // Update user's friend list
+        const updatedUser = await User.findOneAndUpdate({_id: userID}, {friends: [...foundUser.friends, foundFriend]} );
+        // Update friend's friend list
+        const updatedFriend = await User.findOneAndUpdate({_id: friendID}, {friends: [...foundFriend.friends, foundUser]});
+        // Success
+        res.status(200).json({message: "Success"});
+    } catch(error) {
+        console.log(error)
 
-module.exports = {register, login, getUserInfo, updateUser, getSingleUser}
+        res.status(401).json({message: "Unable to add to this user's friend list right now, please try again later"})
+    }
+}
+module.exports = {register, login, getUserInfo, updateUser, getSingleUser, addFriend}

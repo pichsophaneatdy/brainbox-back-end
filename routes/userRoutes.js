@@ -13,4 +13,6 @@ router.route("/")
 // Single user route
 router.route("/:userID")
     .get(userController.getSingleUser);
+// Add friend
+router.route("/addFriend").patch(userController.addFriend);
 module.exports = router;

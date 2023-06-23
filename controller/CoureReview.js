@@ -2,7 +2,7 @@ const CourseReview = require("../model/CourseReview.js");
 
 const createReview = async (req, res) => {
     const {userID, courseID, professor, difficulty, usefulness, topics, comment, recommendation} = req.body;
-    if (!userID || !courseID || !professor || !difficulty || !usefulness || !topics || !recommendation) {
+    if (!userID || !courseID || !professor || !difficulty || !usefulness || !topics) {
         return res.status(400).json({message: "Missing required information"});
     }
     try {
