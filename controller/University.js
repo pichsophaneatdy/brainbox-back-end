@@ -1,6 +1,7 @@
 const University = require("../model/University");
 const Degree = require("../model/Degree");
 const Course = require("../model/CourseModel");
+const User = require("../model/UserModel");
 //  Create university 
 const createUniversity = async(req, res) => {
     const {name, location, website} = req.body;
@@ -86,7 +87,7 @@ const createCourse = async(req, res) => {
         const newCourse = await Course.create({name, code, credits, degree, description});
         res.status(201).json(newCourse);
     } catch(error){
-        res.status(500).json({message: "Unable to create this course right now, please try again later"});
+        res.status(500).json({message: "Unable to create this course right now, please try again later", error: error});
     }
 }
 const getCourses = async(req, res) => {
@@ -98,7 +99,7 @@ const getCourses = async(req, res) => {
         const filteredCourses = allCourses.filter((course) => course.degree == req.params.degreeID);
         res.status(200).json(filteredCourses);
     } catch(error) {
-        res.status(500).json({message: "Unable to retrieve the courses right now, please try again later."})
+        res.status(500).json({message: "Unable to retrieve the courses right now, please try again later.", error: error})
     }
 
 }
@@ -113,7 +114,35 @@ const getSingleCourse = async(req, res)=> {
         }
         res.status(200).json(course);
     } catch(error) {
-        res.status(500).json({message: "Unable to retrieve the information right now, please try again later"})
+        res.status(500).json({message: "Unable to retrieve the information right now, please try again later", error: error})
     }
 }
-module.exports = {createUniversity, getUniversities, getSingleUniversity, createDegree, getDegrees, getSingleDegree, createCourse, getCourses, getSingleCourse};
+const getUserGivenCourse = async(req, res) => {
+    if(!req.params.courseID) {
+        return res.status(400).json({message: "Missing course id"});
+    }
+    try {
+        const allUsers = await User.find();
+        const users = [];
+        const pastUsers = [];
+        allUsers.forEach((user) => {
+            user?.enrollment?.current?.map((course) => {
+                if(course == req.params.courseID) {
+                    const {_id, firstName, lastName, university, degree} = user;
+                    users.push({_id, firstName, lastName, university, degree});
+                };
+            })
+            user?.enrollment?.past?.map((course) => {
+                if(course == req.params.courseID) {
+                    const {_id, firstName, lastName, university, degree} = user;
+                    pastUsers.push({_id, firstName, lastName, university, degree});
+                };
+            })
+        })
+        res.status(200).json({current: users, past: pastUsers});
+    } catch(error){
+        console.log(error);
+        res.status(500).json({message: "Unable to retrieve the information right now, please try again later", error: error})
+    }
+}
+module.exports = {createUniversity, getUniversities, getSingleUniversity, createDegree, getDegrees, getSingleDegree, createCourse, getCourses, getSingleCourse, getUserGivenCourse};
