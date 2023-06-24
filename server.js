@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./database/connectDB");
 dotenv.config();
+const socketIO = require("socket.io");
 const PORT = process.env.PORT || 8080;
 
 // Import Routers and Middlware
@@ -12,6 +13,7 @@ const postRouter = require("./routes/postRoute");
 const courseReviewRouter = require("./routes/Course");
 
 const app = express();
+
 
 // Middlewares
 app.use(express.json());
