@@ -1,6 +1,14 @@
 const User = require("../model/UserModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs")
+// Streamchat
+const {connect} = require("getstream");
+const StreamChat = require("stream-chat").StreamChat;
+
+const api_key = process.env.STREAM_API_KEY;
+const api_secret = process.env.STREAM_API_SECRET;
+const app_id = process.env.STREAM_APP_ID;
+
 // Register a new student
 const register = async (req, res) => {
     // Check if all the required fields exist
@@ -21,8 +29,13 @@ const register = async (req, res) => {
     try {
         const newUser = await User.create({firstName, lastName, email, password: hashPassword, location});
         const accessToken = await jwt.sign({id: newUser._id, firstName: newUser.firstName}, process.env.SECRET_KEY, {expiresIn: "24h"});
-        res.status(201).json({accessToken});
+        // Stream chart
+        const serverClient = connect(api_key, api_secret, app_id);
+        const streamChatToken = serverClient.createUserToken((newUser._id).toString());
+
+        res.status(201).json({accessToken, streamChatToken});
     } catch(error) {
+        console.log(error);
         res.status(500).send({server_error: error});
     }
 }
@@ -43,8 +56,12 @@ const login = async (req, res) => {
     if(!validPassword) {
         return res.status(401).json({message: "The password is incorrect."})
     }
+    // Stream chat
+    const serverClient = connect(api_key, api_secret, app_id);
+    const client = StreamChat.getInstance(api_key, api_secret);
+    const streamChatToken = serverClient.createUserToken((foundUser._id).toString())
     const accessToken = jwt.sign({id: foundUser._id, firstName: foundUser.firstName}, process.env.SECRET_KEY, {expiresIn: "24h"});
-    res.status(200).json({accessToken});
+    res.status(200).json({accessToken, streamChatToken});
 }
 // Update User Info 
 const updateUser = async(req, res) => {
