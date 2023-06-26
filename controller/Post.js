@@ -17,7 +17,7 @@ const createPost = async(req, res) => {
     if(req.file) {
         try {
             // upload the image to Cloudinary
-            console.log(req.file.path);
+
             const result = await cloudinary.uploader.upload(req.file.path);
             const newPost = await Post.create({
                 userID,

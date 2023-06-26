@@ -5,6 +5,15 @@ const bcrypt = require("bcryptjs")
 const {connect} = require("getstream");
 const StreamChat = require("stream-chat").StreamChat;
 
+// Cloudinary
+const cloudinary = require('cloudinary').v2;
+// Cloudinary configuration
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+})
+
 const api_key = process.env.STREAM_API_KEY;
 const api_secret = process.env.STREAM_API_SECRET;
 const app_id = process.env.STREAM_APP_ID;
@@ -27,7 +36,8 @@ const register = async (req, res) => {
 
     // Create a new user to the database
     try {
-        const newUser = await User.create({firstName, lastName, email, password: hashPassword, location});
+        const result = await cloudinary.uploader.upload(req.file.path);
+        const newUser = await User.create({firstName, lastName, email, password: hashPassword, location, picturePath: result.url});
         const accessToken = await jwt.sign({id: newUser._id, firstName: newUser.firstName}, process.env.SECRET_KEY, {expiresIn: "24h"});
         // Stream chart
         const serverClient = connect(api_key, api_secret, app_id);
