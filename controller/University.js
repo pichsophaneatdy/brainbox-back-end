@@ -128,14 +128,14 @@ const getUserGivenCourse = async(req, res) => {
         allUsers.forEach((user) => {
             user?.enrollment?.current?.map((course) => {
                 if(course == req.params.courseID) {
-                    const {_id, firstName, lastName, university, degree} = user;
-                    users.push({_id, firstName, lastName, university, degree});
+                    const {_id, firstName, lastName, university, degree, picturePath} = user;
+                    users.push({_id, firstName, lastName, university, degree, picturePath});
                 };
             })
             user?.enrollment?.past?.map((course) => {
                 if(course == req.params.courseID) {
-                    const {_id, firstName, lastName, university, degree} = user;
-                    pastUsers.push({_id, firstName, lastName, university, degree});
+                    const {_id, firstName, lastName, university, degree, picturePath} = user;
+                    pastUsers.push({_id, firstName, lastName, university, degree, picturePath});
                 };
             })
         })

@@ -19,4 +19,6 @@ router.route("/:userID")
     .get(userController.getSingleUser);
 // Add friend
 router.route("/addFriend").patch(userController.addFriend);
+// Get reccommended friend
+router.route("/recommend/:userID").get(userController.getRecommendationFriends);
 module.exports = router;

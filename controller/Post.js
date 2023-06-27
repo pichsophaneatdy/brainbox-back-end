@@ -1,6 +1,8 @@
 const Post = require("../model/Post");
+const User = require('../model/UserModel');
 const multer = require("multer");
 const cloudinary = require('cloudinary').v2;
+const axios = require("axios");
 // Cloudinary configuration
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -56,4 +58,41 @@ const getPost = async(req, res) => {
         res.status(500).json({message: "Unable to retrieve the post currently, please try again later"});
     }
 }
-module.exports = {createPost, getPost};
+const getNewFeeds = async (req, res) => {
+    if(!req.params.userID) {
+        return res.status(400).json({message: "Missing user information"});
+    }
+    try {
+        // Get User Friends
+        const foundUser = await User.findById(req.params.userID);
+        const friendList = foundUser.friends.map((friend) => {
+            return friend._id;
+        })
+        // Fetch a post
+        const fetchPost = async (id) => {
+            try {
+                const response = await axios.get(`http://localhost:8080/post/${id}`);
+                return response.data;
+            } catch(error) {
+                console.log(error);
+            }
+        } 
+        // Fetch all post
+        const fetchPostData = async() => {
+            const postPromises = friendList.map((id) => {
+                return fetchPost(id);
+            });
+            try {
+                const postData = await Promise.all(postPromises);
+                const filteredData = postData.filter((array) => array.length > 0).flat();
+                res.status(200).json(filteredData);
+            } catch(error) {
+                console.log(error);
+            }
+        }
+        fetchPostData();
+    } catch(error) {
+        res.status(500).json({message: "Unable to fetch the post right, try again later."})
+    }
+}
+module.exports = {createPost, getPost, getNewFeeds};
