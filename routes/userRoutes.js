@@ -2,8 +2,12 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controller/User");
 const authenticateMiddleware = require("../middleware/authenticate");
+
+const multer = require("multer");
+const upload = multer({dest: "uploads/"});
+
 // Register
-router.route("/register").post(userController.register);
+router.route("/register").post(upload.single("profile"),userController.register);
 // Login
 router.route("/login").post(userController.login);
 // Get user info
@@ -15,4 +19,6 @@ router.route("/:userID")
     .get(userController.getSingleUser);
 // Add friend
 router.route("/addFriend").patch(userController.addFriend);
+// Get reccommended friend
+router.route("/recommend/:userID").get(userController.getRecommendationFriends);
 module.exports = router;
