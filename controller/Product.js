@@ -11,7 +11,7 @@ cloudinary.config({
 
 const createProduct = async (req, res) => {
     const {name, price, userID, detail, degreeID} = req.body;
-    if (!name || !price || !userID || !detail || !degreeID) {
+    if (!name || !price || !userID || !degreeID) {
         return res.status(400).json({message: "Missing required information"});
     } 
     try {
@@ -30,15 +30,16 @@ const createProduct = async (req, res) => {
     }
 }
 const getProducts = async (req, res) => {
-    if(req.params.degreeID) {
+    if(!req.params.degreeID) {
         return res.status(400).json({message: "Missing information"})
     }
     try {
-            const products = await Product.find({degreeID});
-            res.status(200),json(products);
+            const products = await Product.find({degreeID: req.params.degreeID});
+            res.status(200).json(products);
     } catch(error) {
+        console.log(error);
         res.status(500).json({message: "Unable to retrieve products right now"});
     }
 }
 
-module.export = {createProduct, getProducts};
+module.exports = {createProduct, getProducts};

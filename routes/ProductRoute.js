@@ -1,7 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const PostController = require('../controller/Post');
+const ProductController = require('../controller/Product');
 
-router.route("/").post(PostController.createProduct).get(PostController.getProducts);
+const multer = require("multer");
+const upload = multer({dest: "uploads/"});
+
+router.route("/").post(upload.single("image"),ProductController.createProduct)
+router.route("/:degreeID").get(ProductController.getProducts);
 
 module.exports = router;
