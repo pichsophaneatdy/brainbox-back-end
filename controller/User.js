@@ -2,9 +2,6 @@ const User = require("../model/UserModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const axios = require("axios");
-// Streamchat
-const {connect} = require("getstream");
-const StreamChat = require("stream-chat").StreamChat;
 
 // Cloudinary
 const cloudinary = require('cloudinary').v2;
@@ -40,11 +37,8 @@ const register = async (req, res) => {
         const result = await cloudinary.uploader.upload(req.file.path);
         const newUser = await User.create({firstName, lastName, email, password: hashPassword, location, picturePath: result.url});
         const accessToken = await jwt.sign({id: newUser._id, firstName: newUser.firstName}, process.env.SECRET_KEY, {expiresIn: "24h"});
-        // Stream chart
-        const serverClient = connect(api_key, api_secret, app_id);
-        const streamChatToken = serverClient.createUserToken((newUser._id).toString());
 
-        res.status(201).json({accessToken, streamChatToken});
+        res.status(201).json({accessToken});
     } catch(error) {
         console.log(error);
         res.status(500).send({server_error: error});
@@ -67,12 +61,9 @@ const login = async (req, res) => {
     if(!validPassword) {
         return res.status(401).json({message: "The password is incorrect."})
     }
-    // Stream chat
-    const serverClient = connect(api_key, api_secret, app_id);
-    const client = StreamChat.getInstance(api_key, api_secret);
-    const streamChatToken = serverClient.createUserToken((foundUser._id).toString())
+
     const accessToken = jwt.sign({id: foundUser._id, firstName: foundUser.firstName}, process.env.SECRET_KEY, {expiresIn: "24h"});
-    res.status(200).json({accessToken, streamChatToken});
+    res.status(200).json({accessToken});
 }
 // Update User Info 
 const updateUser = async(req, res) => {

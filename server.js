@@ -14,6 +14,7 @@ const userRouter = require("./routes/userRoutes");
 const universityRouter = require("./routes/universityRoutes")
 const postRouter = require("./routes/postRoute");
 const courseReviewRouter = require("./routes/Course");
+const productRouter = require("./routes/ProductRoute");
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.get("/", (req, res) => res.send("<h1>Welcome to BrainBox API<h1>"));
 app.use("/user", userRouter);
 app.use("/university", universityRouter);
 app.use("/post", postRouter);
+app.use("/product", productRouter);
 
 app.use("/courseReview",courseReviewRouter);
 // Connect to Database abd start the server
